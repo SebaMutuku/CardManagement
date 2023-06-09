@@ -5,5 +5,4 @@ import com.logiceacards.dto.UserDTO;
 
 public abstract class AbstractUser {
     protected abstract ResponseDTO authenticate(UserDTO request);
-    protected abstract ResponseDTO getAllUsers(String username, String password);
 }

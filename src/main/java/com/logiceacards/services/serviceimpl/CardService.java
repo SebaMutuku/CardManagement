@@ -45,10 +45,10 @@ public class CardService extends AbstractCard {
 
     @Override
     public ResponseDTO viewCard(Long userId) {
-        Optional<ResponseDTO> response = cardRepo.findByUserId(userId).map(
-                card -> new ResponseDTO(card, "Success", HttpStatus.FOUND));
-        response.ifPresent(responseDTO -> log.info("Validation response ----> [{}]", responseDTO));
-        return response.get();
+        ResponseDTO response = cardRepo.findByUserId(userId).map(
+                card -> new ResponseDTO(card, "Success", HttpStatus.FOUND)).orElse((new ResponseDTO(null, "No card exists", HttpStatus.NOT_FOUND)));
+        log.info("Validation response ----> [{}]", response);
+        return response;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class CardService extends AbstractCard {
 
     @Override
     public ResponseDTO viewAllCards() {
-        Optional<ResponseDTO> responseDTO = cardRepo.findAll().stream().map(card->new ResponseDTO(card,"Success",HttpStatus.OK)).findFirst();
+        Optional<ResponseDTO> responseDTO = cardRepo.findAll().stream().map(card -> new ResponseDTO(card, "Success", HttpStatus.OK)).findFirst();
         log.info("Card response response ---> [{}]", responseDTO);
         return responseDTO.get();
     }

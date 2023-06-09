@@ -23,7 +23,6 @@ import java.util.Optional;
 public class UserService extends AbstractUser {
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
-
     private final UserRepo userRepo;
 
     public UserService(@Autowired UserRepo userRepo, @Autowired AuthenticationManager authenticationManager, @Autowired TokenService tokenService) {
@@ -45,18 +44,6 @@ public class UserService extends AbstractUser {
             return new ResponseDTO(token, "Success", HttpStatus.OK);
         }
         return new ResponseDTO(null, "User not found", HttpStatus.UNAUTHORIZED);
-
-
     }
 
-    @Transactional
-    @Override
-    public ResponseDTO getAllUsers(String username, String password) {
-        Optional<ResponseDTO> responseDTO= userRepo.findAll().stream().parallel().map(users -> new ResponseDTO(
-                users, "Success", HttpStatus.OK
-        ));
-        responseDTO.ifPresent(response -> log.info("Response body when creating a student ----> [{}]", response));
-        return responseDTO.get();
-
-    }
 }
