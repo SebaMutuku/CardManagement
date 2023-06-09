@@ -54,4 +54,3 @@ public class ControllerAdvice {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 }
-}
