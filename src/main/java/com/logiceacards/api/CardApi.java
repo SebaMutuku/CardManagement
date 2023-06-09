@@ -12,7 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/logiceaCard/v1/", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/card", produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 public class CardApi {
     private final CardService cardService;
@@ -22,7 +22,7 @@ public class CardApi {
     }
 
 
-    @PostMapping(value = "/card/createCard", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<ResponseDTO> addCard(@RequestBody CardDTO request) {
         ResponseDTO body = cardService.createCard(request);
@@ -30,7 +30,7 @@ public class CardApi {
         return new ResponseEntity<>(body, body.status());
     }
 
-    @GetMapping(value = "/card/viewCard", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/viewById", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<ResponseDTO> f(@RequestParam Long userId) {
         ResponseDTO body = cardService.viewCard(userId);
@@ -38,7 +38,7 @@ public class CardApi {
         return new ResponseEntity<>(body, body.status());
     }
 
-    @GetMapping(value = "/card/viewCard", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/card/viewAll", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<ResponseDTO> viewAll() {
         ResponseDTO body = cardService.viewAllCards();
@@ -46,7 +46,7 @@ public class CardApi {
         return new ResponseEntity<>(body, body.status());
     }
 
-    @PutMapping(value = "/card/updateCard", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<ResponseDTO> updateCard(@RequestBody CardDTO request, @RequestParam Long cardId) {
         ResponseDTO body = cardService.updateCard(request, cardId);
