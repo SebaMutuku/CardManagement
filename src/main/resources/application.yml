@@ -1,0 +1,14 @@
+server:
+  port: 9097
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+  datasource:
+    hikari:
+      pool-name: logicea-card-api-pool
+      maximum-pool-size: 200
+      allow-pool-suspension: true
