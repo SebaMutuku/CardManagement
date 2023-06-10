@@ -1,9 +1,8 @@
 package com.logiceacards.dto;
 
-import lombok.ToString;
+import jakarta.validation.constraints.Null;
+import lombok.NonNull;
 
-import java.util.Optional;
 
-
-public record CardDTO(String cardName, Optional<String> cardColor) {
+public record CardDTO(String cardName, @Null String cardColor, @NonNull Long userId) {
 }

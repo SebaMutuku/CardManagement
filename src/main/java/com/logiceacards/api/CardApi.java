@@ -20,7 +20,7 @@ public class CardApi {
 
 
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<ResponseDTO> addCard(@RequestBody CardDTO request) {
         ResponseDTO body = cardService.createCard(request);
         log.info("Create student response --> [{}]", body);

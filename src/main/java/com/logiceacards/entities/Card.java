@@ -2,12 +2,7 @@ package com.logiceacards.entities;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,9 +19,10 @@ public class Card {
     private String cardName;
     @Column
     private String cardColor;
-    @Column(columnDefinition = "varchar(50) default 'To Do'")
+
+    @Column
     private String cardStatus;
-    @Column(columnDefinition = "varchar(50) default 'To Do'")
+
     @JoinColumn(name = "userId", nullable = false, referencedColumnName = "userId", table = "User")
     private Long userId;
 

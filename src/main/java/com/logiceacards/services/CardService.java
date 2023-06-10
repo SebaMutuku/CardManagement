@@ -4,8 +4,11 @@ package com.logiceacards.services;
 import com.logiceacards.dto.CardDTO;
 import com.logiceacards.dto.ResponseDTO;
 import com.logiceacards.entities.Card;
+import com.logiceacards.entities.User;
 import com.logiceacards.repos.CardRepo;
+import com.logiceacards.repos.UserRepo;
 import com.logiceacards.services.serviceimpl.AbstractCard;
+import com.logiceacards.utils.CardStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CardService extends AbstractCard {
     private final CardRepo cardRepo;
+    private final UserRepo userRepo;
 
 
     @Transactional
@@ -30,9 +34,12 @@ public class CardService extends AbstractCard {
         ).orElseGet(() -> {
             ResponseDTO dto;
             Card card;
-            if (request.cardColor().isPresent() && request.cardColor().get().startsWith("#")) {
-                card = Card.builder().cardName(request.cardName()).cardColor(request.cardColor().get()).build();
-            } else card = Card.builder().cardName(request.cardName()).build();
+            User user = userRepo.findById(request.userId()).get();
+            if (request.cardColor() != null && request.cardColor().startsWith("#")) {
+                card = Card.builder().cardName(request.cardName()).cardColor(request.cardColor())
+                        .cardStatus(CardStatus.TODO.name()).userId(user.getUserId()).build();
+            } else
+                card = Card.builder().cardName(request.cardName()).userId(user.getUserId()).cardStatus(CardStatus.TODO.name()).build();
             cardRepo.save(card);
             dto = new ResponseDTO(card, "Success", HttpStatus.CREATED);
             log.info("Student response ---> [{}]", dto);
@@ -54,15 +61,15 @@ public class CardService extends AbstractCard {
         return cardRepo.findById(cardId).map(
                 card -> {
                     card.setCardName(request.cardName());
-                    card.setCardColor(request.cardColor().get());
+                    card.setCardColor(request.cardColor());
                     card.setCardStatus(request.cardName());
                     cardRepo.save(card);
                     return new ResponseDTO(card, "Success", HttpStatus.FOUND);
                 }).orElseGet(() -> {
             ResponseDTO dto;
             Card card;
-            if (request.cardColor().isPresent() && request.cardColor().get().startsWith("#")) {
-                card = Card.builder().cardName(request.cardName()).cardColor(request.cardColor().get()).build();
+            if (request.cardColor() != null && request.cardColor().startsWith("#")) {
+                card = Card.builder().cardName(request.cardName()).cardColor(request.cardColor()).build();
             } else card = Card.builder().cardName(request.cardName()).build();
             cardRepo.save(card);
             dto = new ResponseDTO(card, "Successfully create a new Card", HttpStatus.CREATED);
