@@ -4,22 +4,19 @@ package com.logiceacards.api;
 import com.logiceacards.dto.CardDTO;
 import com.logiceacards.dto.ResponseDTO;
 import com.logiceacards.services.CardService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/v1/card", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/logicea/v1/card", produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
+@RequiredArgsConstructor
 public class CardApi {
     private final CardService cardService;
-
-    public CardApi(@Autowired CardService cardService) {
-        this.cardService = cardService;
-    }
 
 
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

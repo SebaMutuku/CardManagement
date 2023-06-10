@@ -3,11 +3,12 @@ package com.logiceacards.services;
 
 import com.logiceacards.dto.ResponseDTO;
 import com.logiceacards.dto.UserDTO;
+import com.logiceacards.entities.Role;
 import com.logiceacards.entities.User;
 import com.logiceacards.repos.UserRepo;
 import com.logiceacards.services.serviceimpl.AbstractUser;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,23 +22,16 @@ import java.util.Map;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService extends AbstractUser {
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(@Autowired UserRepo userRepo, @Autowired AuthenticationManager authenticationManager, @Autowired TokenService tokenService, @Autowired PasswordEncoder passwordEncoder) {
-        this.userRepo = userRepo;
-        this.tokenService = tokenService;
-        this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
-    }
-
     @Override
     @Transactional
     public ResponseDTO authenticate(UserDTO request) {
-        log.info("Authenticate request --> [{}]", request);
         return userRepo.findByUsername(request.username()).map(user -> {
             var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     request.username(), request.password()));
@@ -69,7 +63,7 @@ public class UserService extends AbstractUser {
                 map(foundUser -> new ResponseDTO(foundUser, "User exists", HttpStatus.ALREADY_REPORTED))
                 .orElseGet(() -> {
                     var userInstance = User.builder().username(user.getUsername()).password(passwordEncoder.encode(user.getPassword()))
-                            .createdOn(new Date()).fullName(user.getFullName()).role(user.getRole())
+                            .createdOn(new Date()).fullName(user.getFullName()).role(Role.valueOf(user.getRole().name()))
                             .build();
                     userRepo.save(userInstance);
                     ResponseDTO response = new ResponseDTO(userInstance, "Successfully added user " + user.getUsername(), HttpStatus.CREATED);
