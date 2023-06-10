@@ -34,6 +34,7 @@ public class UserService extends AbstractUser {
     @Override
     @Transactional
     public ResponseDTO authenticate(UserDTO request) {
+        log.info("Request --> [{}]", request);
         Optional<User> user = userRepo.findByUsernameAndPassword(request.username(), request.password());
         var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.username(), request.password()));
@@ -41,9 +42,13 @@ public class UserService extends AbstractUser {
             Map<String, Object> claims = new HashMap<>();
             claims.put("username", authentication.getPrincipal());
             var token = tokenService.generateToken(claims, user.get());
-            return new ResponseDTO(token, "Success", HttpStatus.OK);
+            ResponseDTO response = new ResponseDTO(token, "Success", HttpStatus.OK);
+            log.info("Response --> [{}]", response);
+            return response;
         }
-        return new ResponseDTO(null, "User not found", HttpStatus.UNAUTHORIZED);
+        ResponseDTO response = new ResponseDTO(null, "User not found", HttpStatus.UNAUTHORIZED);
+        log.info("Response --> [{}]", response);
+        return response;
     }
 
 }

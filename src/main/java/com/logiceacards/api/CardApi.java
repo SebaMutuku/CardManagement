@@ -32,7 +32,7 @@ public class CardApi {
 
     @GetMapping(value = "/viewById", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    public ResponseEntity<ResponseDTO> f(@RequestParam Long userId) {
+    public ResponseEntity<ResponseDTO> findById(@RequestParam Long userId) {
         ResponseDTO body = cardService.viewCard(userId);
         log.info("Create student response --> [{}]", body);
         return new ResponseEntity<>(body, body.status());
