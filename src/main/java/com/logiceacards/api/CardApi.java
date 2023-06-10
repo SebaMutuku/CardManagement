@@ -23,7 +23,6 @@ public class CardApi {
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<ResponseDTO> addCard(@RequestBody CardDTO request) {
         ResponseDTO body = cardService.createCard(request);
-        log.info("Create student response --> [{}]", body);
         return new ResponseEntity<>(body, body.status());
     }
 
@@ -31,7 +30,6 @@ public class CardApi {
     @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<ResponseDTO> findById(@RequestParam Long userId) {
         ResponseDTO body = cardService.viewCard(userId);
-        log.info("Create student response --> [{}]", body);
         return new ResponseEntity<>(body, body.status());
     }
 
@@ -39,15 +37,20 @@ public class CardApi {
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ResponseDTO> viewAll() {
         ResponseDTO body = cardService.viewAllCards();
-        log.info("Create student response --> [{}]", body);
         return new ResponseEntity<>(body, body.status());
     }
 
     @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public ResponseEntity<ResponseDTO> updateCard(@RequestBody CardDTO request, @RequestParam Long cardId) {
-        ResponseDTO body = cardService.updateCard(request, cardId);
-        log.info("Create student response --> [{}]", body);
+    public ResponseEntity<ResponseDTO> updateCard(@RequestBody CardDTO request) {
+        ResponseDTO body = cardService.updateCard(request);
+        return new ResponseEntity<>(body, body.status());
+    }
+
+    @DeleteMapping(value = "/deleteCard", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    public ResponseEntity<ResponseDTO> deleteCard(@RequestParam Long userId, @RequestParam long cardId) {
+        ResponseDTO body = cardService.deleteCard(cardId, userId);
         return new ResponseEntity<>(body, body.status());
     }
 }

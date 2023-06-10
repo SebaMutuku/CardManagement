@@ -4,7 +4,6 @@ package com.logiceacards.services;
 import com.logiceacards.dto.CardDTO;
 import com.logiceacards.dto.ResponseDTO;
 import com.logiceacards.entities.Card;
-import com.logiceacards.entities.User;
 import com.logiceacards.repos.CardRepo;
 import com.logiceacards.repos.UserRepo;
 import com.logiceacards.services.serviceimpl.AbstractCard;
@@ -28,7 +27,7 @@ public class CardService extends AbstractCard {
     @Transactional
     @Override
     public ResponseDTO createCard(CardDTO request) {
-        log.info("Create student request ----> [{}]", request);
+        log.info("Create Card request ----> [{}]", request);
         return cardRepo.findByCardName(request.cardName()).map(
                 card -> new ResponseDTO(card, "Card exists", HttpStatus.ALREADY_REPORTED)
         ).orElseGet(() -> userRepo.findById(request.userId()).map(user -> {
@@ -57,12 +56,12 @@ public class CardService extends AbstractCard {
     }
 
     @Override
-    public ResponseDTO updateCard(CardDTO request, Long cardId) {
-        return cardRepo.findById(cardId).map(
+    public ResponseDTO updateCard(CardDTO request) {
+        return cardRepo.findById(request.cardId()).map(
                 card -> {
                     card.setCardName(request.cardName());
                     card.setCardColor(request.cardColor());
-                    card.setCardStatus(request.cardName());
+                    card.setCardStatus(request.cardStatus());
                     cardRepo.save(card);
                     return new ResponseDTO(card, "Success", HttpStatus.FOUND);
                 }).orElseGet(() -> {
@@ -72,11 +71,33 @@ public class CardService extends AbstractCard {
                 card = Card.builder().cardName(request.cardName()).cardColor(request.cardColor()).build();
             } else card = Card.builder().cardName(request.cardName()).build();
             cardRepo.save(card);
-            dto = new ResponseDTO(card, "Successfully create a new Card", HttpStatus.CREATED);
+            dto = new ResponseDTO(card, "Successfully create a new Card", HttpStatus.OK);
             log.info("Card response response ---> [{}]", dto);
             return dto;
         });
     }
+
+    @Override
+    public ResponseDTO deleteCard(Long cardId, Long userId) {
+        log.info("Delete--> cardId [{}] UserId ----> [{}]", cardId, userId);
+        return cardRepo.findById(cardId).map(
+                card -> {
+                    ResponseDTO response;
+                    if (card.getUserId().equals(userId)) {
+                        cardRepo.delete(card);
+                        response = new ResponseDTO(null, "Successfully deleted card with id " + cardId, HttpStatus.OK);
+                    } else
+                        response = new ResponseDTO(null, "You are not the owner of card Id " + cardId, HttpStatus.EXPECTATION_FAILED);
+                    log.info("Delete card response [{}]", response);
+                    return response;
+                }
+        ).orElseGet(() -> {
+            ResponseDTO response = new ResponseDTO(null, "Card with id " + cardId + " not found", HttpStatus.EXPECTATION_FAILED);
+            log.info("Delete card response [{}]", response);
+            return response;
+        });
+    }
+
 
     @Override
     public ResponseDTO viewAllCards() {
