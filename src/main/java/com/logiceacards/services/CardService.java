@@ -35,7 +35,7 @@ public class CardService extends AbstractCard {
             ResponseDTO dto;
             Card card;
             User user = userRepo.findById(request.userId()).get();
-            if (request.cardColor() != null && request.cardColor().startsWith("#")) {
+            if (request.cardColor() != null && request.cardColor().startsWith("#") && request.cardColor().length() == 7) {
                 card = Card.builder().cardName(request.cardName()).cardColor(request.cardColor())
                         .cardStatus(CardStatus.TODO.name()).userId(user.getUserId()).build();
             } else
@@ -51,7 +51,8 @@ public class CardService extends AbstractCard {
     @Override
     public ResponseDTO viewCard(Long userId) {
         ResponseDTO response = cardRepo.findByUserId(userId).map(
-                card -> new ResponseDTO(card, "Success", HttpStatus.FOUND)).orElse((new ResponseDTO(null, "No card exists", HttpStatus.NOT_FOUND)));
+                        card -> new ResponseDTO(card, "Success", HttpStatus.FOUND))
+                .orElse((new ResponseDTO(null, "No card exists", HttpStatus.NOT_FOUND)));
         log.info("Validation response ----> [{}]", response);
         return response;
     }
@@ -68,7 +69,7 @@ public class CardService extends AbstractCard {
                 }).orElseGet(() -> {
             ResponseDTO dto;
             Card card;
-            if (request.cardColor() != null && request.cardColor().startsWith("#")) {
+            if (request.cardColor() != null && request.cardColor().startsWith("#") && request.cardColor().length() == 7) {
                 card = Card.builder().cardName(request.cardName()).cardColor(request.cardColor()).build();
             } else card = Card.builder().cardName(request.cardName()).build();
             cardRepo.save(card);
