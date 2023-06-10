@@ -1,10 +1,11 @@
-package com.logiceacards.services.serviceimpl;
+package com.logiceacards.services;
 
 
 import com.logiceacards.dto.CardDTO;
 import com.logiceacards.dto.ResponseDTO;
 import com.logiceacards.entities.Card;
 import com.logiceacards.repos.CardRepo;
+import com.logiceacards.services.serviceimpl.AbstractCard;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

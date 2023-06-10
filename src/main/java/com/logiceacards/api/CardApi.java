@@ -3,7 +3,7 @@ package com.logiceacards.api;
 
 import com.logiceacards.dto.CardDTO;
 import com.logiceacards.dto.ResponseDTO;
-import com.logiceacards.services.serviceimpl.CardService;
+import com.logiceacards.services.CardService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
