@@ -2,6 +2,7 @@ package com.logiceacards.api;
 
 
 import com.logiceacards.dto.ResponseDTO;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,9 +44,17 @@ public class ControllerAdvice {
     }
 
     @ExceptionHandler({NoHandlerFoundException.class, DataIntegrityViolationException.class,
-            DataIntegrityViolationException.class, IllegalArgumentException.class, RuntimeException.class})
+            DataIntegrityViolationException.class, IllegalArgumentException.class,
+            RuntimeException.class, ExpiredJwtException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ResponseDTO> handleInternalServerErrors(Exception exception) {
+        var response = new ResponseDTO(null, exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler({Exception.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ResponseDTO> handleGeneralExceptions(Exception exception) {
         var response = new ResponseDTO(null, exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }

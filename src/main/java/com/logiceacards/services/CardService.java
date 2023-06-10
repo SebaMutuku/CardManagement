@@ -31,10 +31,9 @@ public class CardService extends AbstractCard {
         log.info("Create student request ----> [{}]", request);
         return cardRepo.findByCardName(request.cardName()).map(
                 card -> new ResponseDTO(card, "Card exists", HttpStatus.ALREADY_REPORTED)
-        ).orElseGet(() -> {
+        ).orElseGet(() -> userRepo.findById(request.userId()).map(user -> {
             ResponseDTO dto;
             Card card;
-            User user = userRepo.findById(request.userId()).get();
             if (request.cardColor() != null && request.cardColor().startsWith("#") && request.cardColor().length() == 7) {
                 card = Card.builder().cardName(request.cardName()).cardColor(request.cardColor())
                         .cardStatus(CardStatus.TODO.name()).userId(user.getUserId()).build();
@@ -45,7 +44,7 @@ public class CardService extends AbstractCard {
             log.info("Student response ---> [{}]", dto);
             return dto;
 
-        });
+        }).orElseGet(() -> new ResponseDTO(null, "User with id " + request.userId() + " doesn't exist", HttpStatus.NOT_FOUND)));
     }
 
     @Override
