@@ -20,7 +20,7 @@ public class CardApi {
 
 
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-//    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<ResponseDTO> addCard(@RequestBody CardDTO request) {
         ResponseDTO body = cardService.createCard(request);
         log.info("Create student response --> [{}]", body);
@@ -28,15 +28,15 @@ public class CardApi {
     }
 
     @GetMapping(value = "/viewById", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<ResponseDTO> findById(@RequestParam Long userId) {
         ResponseDTO body = cardService.viewCard(userId);
         log.info("Create student response --> [{}]", body);
         return new ResponseEntity<>(body, body.status());
     }
 
-    @GetMapping(value = "/card/viewAll", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @GetMapping(value = "/viewAll", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ResponseDTO> viewAll() {
         ResponseDTO body = cardService.viewAllCards();
         log.info("Create student response --> [{}]", body);
@@ -44,7 +44,7 @@ public class CardApi {
     }
 
     @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<ResponseDTO> updateCard(@RequestBody CardDTO request, @RequestParam Long cardId) {
         ResponseDTO body = cardService.updateCard(request, cardId);
         log.info("Create student response --> [{}]", body);

@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.SecurityBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,21 +18,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
-public class SecurityConfig{
+public class SecurityConfig {
 
     private final AuthFilter authFilter;
     private final AuthenticationProvider authenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(auth -> auth
+        http.csrf(AbstractHttpConfigurer::disable).sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/security/**").permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers("/logicea/v1/card/viewAll").authenticated()
+                        .anyRequest().authenticated()
                 )
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(Customizer.withDefaults());
+                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

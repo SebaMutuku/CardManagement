@@ -21,11 +21,11 @@ public class LogiceaCardManagementApplication {
     CommandLineRunner runner(UserService userService) {
         return args -> {
             userService.createUser(User.builder()
-                    .role(Role.ADMIN).createdOn(new Date())
+                    .role(Role.ADMIN).createdOn(new Date()).userId(1L)
                     .fullName("Logicea user 1").username("logiceaAdmin").password("logicea123").build());
-            userService.createUser(User.builder()
+            userService.createUser(User.builder().userId(2L)
                     .role(Role.USER).createdOn(new Date())
-                    .fullName("Logicea user 2").username("logiceaUser").password("logicea123").build());
+                    .fullName("Logicea user 1").username("logiceaUser").password("logicea123").build());
         };
     }
 

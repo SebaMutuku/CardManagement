@@ -24,6 +24,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "userId", unique = true, nullable = false)
     private Long userId;
 
     @Column(nullable = false)
@@ -44,11 +45,8 @@ public class User implements UserDetails {
     @Column
     private Date lastLogin;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    private Card card;
 
 
     @Override

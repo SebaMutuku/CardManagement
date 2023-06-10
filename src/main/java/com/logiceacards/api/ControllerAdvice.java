@@ -4,6 +4,7 @@ package com.logiceacards.api;
 import com.logiceacards.dto.ResponseDTO;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -36,7 +37,7 @@ public class ControllerAdvice {
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class, HttpMediaTypeNotAcceptableException.class,
-            HttpMediaTypeNotSupportedException.class})
+            HttpMediaTypeNotSupportedException.class, InvalidDataAccessApiUsageException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ResponseDTO> handleHttpExceptions(Exception exception) {
         var response = new ResponseDTO(null, exception.getMessage(), HttpStatus.BAD_REQUEST);
@@ -44,10 +45,16 @@ public class ControllerAdvice {
     }
 
     @ExceptionHandler({NoHandlerFoundException.class, DataIntegrityViolationException.class,
-            DataIntegrityViolationException.class, IllegalArgumentException.class,
-            RuntimeException.class, ExpiredJwtException.class})
+            DataIntegrityViolationException.class, IllegalArgumentException.class, ExpiredJwtException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ResponseDTO> handleInternalServerErrors(Exception exception) {
+        var response = new ResponseDTO(null, exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler({RuntimeException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ResponseDTO> handleInternalServerErrors(RuntimeException exception) {
         var response = new ResponseDTO(null, exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
