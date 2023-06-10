@@ -3,7 +3,6 @@ package com.logiceacards.services;
 
 import com.logiceacards.dto.ResponseDTO;
 import com.logiceacards.dto.UserDTO;
-import com.logiceacards.entities.Role;
 import com.logiceacards.entities.User;
 import com.logiceacards.repos.UserRepo;
 import com.logiceacards.services.serviceimpl.AbstractUser;
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -39,35 +37,34 @@ public class UserService extends AbstractUser {
     @Override
     @Transactional
     public ResponseDTO authenticate(UserDTO request) {
-        log.info("Request --> [{}]", request);
-        Optional<User> user = userRepo.findByUsernameAndPassword(request.username(), request.password());
-        var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                request.username(), request.password()));
-        if (authentication.isAuthenticated()) {
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("username", authentication.getPrincipal());
-            var token = tokenService.generateToken(claims, user.get());
-            if (token != null) {
-                var userToSave = user.get();
-                userToSave.setToken(token);
-                userToSave.setLastLogin(new Date());
-                userRepo.save(userToSave);
-                ResponseDTO response = new ResponseDTO(token, "Success", HttpStatus.OK);
+        log.info("Authenticate request --> [{}]", request);
+        return userRepo.findByUsernameAndPassword(request.username(), request.password()).map(user -> {
+            var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    request.username(), request.password()));
+            if (authentication.isAuthenticated()) {
+                Map<String, Object> claims = new HashMap<>();
+                claims.put("username", authentication.getPrincipal());
+                var token = tokenService.generateToken(claims, user);
+                if (token != null) {
+                    user.setToken(token);
+                    user.setLastLogin(new Date());
+                    userRepo.save(user);
+                    ResponseDTO response = new ResponseDTO(token, "Success", HttpStatus.OK);
+                    log.info("Response --> [{}]", response);
+                    return response;
+                }
+                ResponseDTO response = new ResponseDTO(null, "Please check your credentials", HttpStatus.OK);
                 log.info("Response --> [{}]", response);
                 return response;
             }
-            ResponseDTO response = new ResponseDTO(token, "Please check your credentials", HttpStatus.OK);
-            log.info("Response --> [{}]", response);
-            return response;
-        }
-        ResponseDTO response = new ResponseDTO(null, "Unauthorized. Please check your credentials", HttpStatus.UNAUTHORIZED);
-        log.info("Response --> [{}]", response);
-        return response;
+            return new ResponseDTO(null, "Unauthorized. Please check your credentials", HttpStatus.UNAUTHORIZED);
+        }).orElseGet(() -> new ResponseDTO(null, "Unauthorized. Please check your credentials", HttpStatus.UNAUTHORIZED));
+
     }
 
     @Override
     public ResponseDTO createUser(User user) {
-        log.info("Request --> [{}]", user);
+        log.info("Create user request --> [{}]", user);
         return userRepo.findByUsername(user.getUsername()).
                 map(foundUser -> new ResponseDTO(foundUser, "User exists", HttpStatus.ALREADY_REPORTED))
                 .orElseGet(() -> {
@@ -76,7 +73,7 @@ public class UserService extends AbstractUser {
                             .build();
                     userRepo.save(userInstance);
                     ResponseDTO response = new ResponseDTO(userInstance, "Successfully added user " + user.getUsername(), HttpStatus.CREATED);
-                    log.info("Response --> [{}]", response);
+                    log.info("Create user response --> [{}]", response);
                     return response;
                 });
     }

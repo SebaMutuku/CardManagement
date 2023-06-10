@@ -31,7 +31,7 @@ public class UserAPi {
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO> authenticate(@RequestBody User user) {
         ResponseDTO body = userService.createUser(user);
-        log.info("Create student response --> [{}]", body);
+        log.info("Create user response --> [{}]", body);
         return new ResponseEntity<>(body, body.status());
     }
 }

@@ -6,5 +6,6 @@ import com.logiceacards.entities.User;
 
 public abstract class AbstractUser {
     protected abstract ResponseDTO authenticate(UserDTO request);
+
     protected abstract ResponseDTO createUser(User user);
 }
