@@ -4,16 +4,14 @@ package com.logiceacards.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-
-import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,7 +36,7 @@ public class User implements UserDetails {
     private String password;
 
     @JsonIgnore
-    @Column
+    @Column(length = 4000)
     private String token;
 
     @Column

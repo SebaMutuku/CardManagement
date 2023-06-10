@@ -34,25 +34,19 @@ public class ControllerAdvice {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({RuntimeException.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<ResponseDTO> handledException(RuntimeException exception) {
-        var response = new ResponseDTO(null, exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler({HttpMessageNotReadableException.class, HttpMediaTypeNotAcceptableException.class, IllegalArgumentException.class,
-            DataIntegrityViolationException.class, HttpMediaTypeNotSupportedException.class})
+    @ExceptionHandler({HttpMessageNotReadableException.class, HttpMediaTypeNotAcceptableException.class,
+            HttpMediaTypeNotSupportedException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ResponseDTO> handleHttpExceptions(Exception exception) {
         var response = new ResponseDTO(null, exception.getMessage(), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({NoHandlerFoundException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ResponseDTO> handledException(NoHandlerFoundException exception) {
-        var response = new ResponseDTO(null, exception.getMessage(), HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    @ExceptionHandler({NoHandlerFoundException.class, DataIntegrityViolationException.class,
+            DataIntegrityViolationException.class, IllegalArgumentException.class, RuntimeException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ResponseDTO> handleInternalServerErrors(Exception exception) {
+        var response = new ResponseDTO(null, exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -38,7 +38,7 @@ public class UserService extends AbstractUser {
     @Transactional
     public ResponseDTO authenticate(UserDTO request) {
         log.info("Authenticate request --> [{}]", request);
-        return userRepo.findByUsernameAndPassword(request.username(), request.password()).map(user -> {
+        return userRepo.findByUsername(request.username()).map(user -> {
             var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     request.username(), request.password()));
             if (authentication.isAuthenticated()) {
@@ -49,7 +49,7 @@ public class UserService extends AbstractUser {
                     user.setToken(token);
                     user.setLastLogin(new Date());
                     userRepo.save(user);
-                    ResponseDTO response = new ResponseDTO(token, "Success", HttpStatus.OK);
+                    ResponseDTO response = new ResponseDTO(token, "Authentication successful", HttpStatus.OK);
                     log.info("Response --> [{}]", response);
                     return response;
                 }

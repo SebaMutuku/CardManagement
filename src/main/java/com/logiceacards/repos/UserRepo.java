@@ -10,6 +10,5 @@ public interface UserRepo extends JpaRepository<User, Long> {
     @Override
     Optional<User> findById(Long aLong);
 
-    Optional<User> findByUsernameAndPassword(String username, String password);
     Optional<User> findByUsername(String username);
 }
