@@ -28,7 +28,7 @@ public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "cardId", unique = true, nullable = false)
-    private Long cardId;
+    private long cardId;
     @Column(nullable = false)
     private String cardName;
     @Column
@@ -42,6 +42,6 @@ public class Card {
     private Date createdOn;
 
     @JoinColumn(name = "userId", nullable = false, referencedColumnName = "userId", table = "User")
-    private Long userId;
+    private long userId;
 
 }

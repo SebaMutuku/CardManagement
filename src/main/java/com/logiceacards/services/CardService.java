@@ -67,37 +67,23 @@ public class CardService extends AbstractCard {
 
     @Override
     public ResponseDTO updateCard(CardDTO request) {
-        return cardRepo.findById(request.cardId()).map(
+        log.info("Received Request [{}]", request);
+        return cardRepo.findByCardIdAndUserId(request.cardId(), request.userId()).map(
                 card -> {
                     card.setCardName(request.cardName());
                     card.setCardColor(request.cardColor());
                     card.setCardStatus(request.cardStatus());
                     cardRepo.save(card);
-                    return new ResponseDTO(card, "Success", HttpStatus.FOUND);
-                }).orElseGet(() -> {
-            ResponseDTO dto;
-            Card card;
-            if (request.cardColor() != null && request.cardColor().startsWith("#") && request.cardColor().length() == 7) {
-                card = Card.builder().cardName(request.cardName()).cardColor(request.cardColor()).build();
-            } else card = Card.builder().cardName(request.cardName()).build();
-            cardRepo.save(card);
-            dto = new ResponseDTO(card, "Successfully create a new Card", HttpStatus.OK);
-            log.info("Card response response ---> [{}]", dto);
-            return dto;
-        });
+                    return new ResponseDTO(card, "Successfully updated card", HttpStatus.CREATED);
+                }).orElseGet(() -> new ResponseDTO(null, "Card not found", HttpStatus.CREATED));
     }
 
     @Override
     public ResponseDTO deleteCard(Long cardId, Long userId) {
         log.info("Delete--> cardId [{}] UserId ----> [{}]", cardId, userId);
-        return cardRepo.findById(cardId).map(
+        return cardRepo.findByCardIdAndUserId(cardId, userId).map(
                 card -> {
-                    ResponseDTO response;
-                    if (card.getUserId().equals(userId)) {
-                        cardRepo.delete(card);
-                        response = new ResponseDTO(null, "Successfully deleted card with id " + cardId, HttpStatus.OK);
-                    } else
-                        response = new ResponseDTO(null, "You are not the owner of card Id " + cardId, HttpStatus.EXPECTATION_FAILED);
+                    ResponseDTO response = new ResponseDTO(null, "Successfully deleted card with id " + cardId, HttpStatus.OK);
                     log.info("Delete card response [{}]", response);
                     return response;
                 }

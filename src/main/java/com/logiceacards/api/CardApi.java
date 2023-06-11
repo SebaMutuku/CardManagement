@@ -55,7 +55,7 @@ public class CardApi {
 
     @DeleteMapping(value = "/deleteCard/{userId}/{cardId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public ResponseEntity<ResponseDTO> deleteCard(@PathVariable Long userId, @PathVariable long cardId) {
+    public ResponseEntity<ResponseDTO> deleteCard(@PathVariable long userId, @PathVariable long cardId) {
         ResponseDTO body = cardService.deleteCard(cardId, userId);
         return new ResponseEntity<>(body, body.status());
     }
