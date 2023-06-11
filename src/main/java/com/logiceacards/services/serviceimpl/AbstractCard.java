@@ -10,7 +10,7 @@ public abstract class AbstractCard {
 
     public abstract ResponseDTO updateCard(CardDTO request);
 
-    public abstract ResponseDTO deleteCard(Long cardId, Long userId);
+    public abstract ResponseDTO deleteCard(long cardId, long userId);
 
     public abstract ResponseDTO viewAllCards();
 }

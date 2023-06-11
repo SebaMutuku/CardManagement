@@ -79,7 +79,7 @@ public class CardService extends AbstractCard {
     }
 
     @Override
-    public ResponseDTO deleteCard(Long cardId, Long userId) {
+    public ResponseDTO deleteCard(long cardId, long userId) {
         log.info("Delete--> cardId [{}] UserId ----> [{}]", cardId, userId);
         return cardRepo.findByCardIdAndUserId(cardId, userId).map(
                 card -> {
