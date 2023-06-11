@@ -56,8 +56,8 @@ public class CardService extends AbstractCard {
         }
         Pageable sortConfigs =
                 PageRequest.of(0, 20);
-        ResponseDTO response = cardRepo.findByCardNameOrCardStatusOrCreatedOnOrCardColor(request.cardName(),
-                        request.cardColor(), creationDate, request.cardStatus()).map(
+        ResponseDTO response = cardRepo.findByUserIdOrCardNameOrCreatedOnOrCardStatusOrCardColorOrderByCardNameAscCardColorAscCardStatusDescCreatedOnDesc(request.userId(),
+                        request.cardName(), creationDate, request.cardStatus(), request.cardColor()).map(
                         card -> new ResponseDTO(card, "Success", HttpStatus.FOUND))
                 .orElse((new ResponseDTO(null, "No card exists", HttpStatus.NOT_FOUND)));
         log.info("Validation response ----> [{}]", response);

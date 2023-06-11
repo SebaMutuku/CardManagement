@@ -13,6 +13,6 @@ public interface CardRepo extends JpaRepository<Card, Long> {
 
     Optional<Card> findByCardName(String cardName);
 
-    Optional<Card> findByCardNameOrCardStatusOrCreatedOnOrCardColor(String cardName, String cardColor, Date createdOn, String Status);
+    Optional<Card> findByUserIdOrCardNameOrCreatedOnOrCardStatusOrCardColorOrderByCardNameAscCardColorAscCardStatusDescCreatedOnDesc(long userId, String cardName, Date createdOn, String Status, String cardColor);
 
 }
