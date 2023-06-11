@@ -8,18 +8,16 @@ import com.logiceacards.repos.CardRepo;
 import com.logiceacards.repos.UserRepo;
 import com.logiceacards.services.serviceimpl.AbstractCard;
 import com.logiceacards.utils.CardStatus;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -58,11 +56,9 @@ public class CardService extends AbstractCard {
             creationDate = new SimpleDateFormat().parse(request.createdOn());
         }
         Pageable sortConfigs =
-                PageRequest.of(0, 20,
-                        Sort.by("cardName").descending()
-                                .and(Sort.by("cardStatus")
-                                        .and(Sort.by("createdOn"))));
-        ResponseDTO response = cardRepo.findByCardNameContainingIgnoreCaseAndCardStatusContainingIgnoreCaseAndCreatedOnAndCardColorContainingIgnoreCase(request.cardName(), request.cardColor(), creationDate, request.cardStatus(), sortConfigs).map(
+                PageRequest.of(0, 20);
+        ResponseDTO response = cardRepo.findByCardNameOrCardStatusOrCreatedOnOrCardColor(request.cardName(),
+                        request.cardColor(), creationDate, request.cardStatus()).map(
                         card -> new ResponseDTO(card, "Success", HttpStatus.FOUND))
                 .orElse((new ResponseDTO(null, "No card exists", HttpStatus.NOT_FOUND)));
         log.info("Validation response ----> [{}]", response);

@@ -14,6 +14,7 @@ public interface CardRepo extends JpaRepository<Card, Long> {
     Optional<Card> findByUserId(long userId);
 
     Optional<Card> findByCardName(String cardName);
-    Optional<Card>findByCardNameContainingIgnoreCaseAndCardStatusContainingIgnoreCaseAndCreatedOnAndCardColorContainingIgnoreCase(String cardName, String cardColor, Date createdOn, String Status, Pageable pageable);
+
+    Optional<Card> findByCardNameOrCardStatusOrCreatedOnOrCardColor(String cardName, String cardColor, Date createdOn, String Status);
 
 }
