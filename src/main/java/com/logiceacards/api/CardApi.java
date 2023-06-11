@@ -6,6 +6,7 @@ import com.logiceacards.dto.ResponseDTO;
 import com.logiceacards.services.CardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,9 +29,14 @@ public class CardApi {
 
     @GetMapping(value = "/viewById", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('USER')")
-    public ResponseEntity<ResponseDTO> findById(@RequestParam Long userId) {
-        ResponseDTO body = cardService.viewCard(userId);
-        return new ResponseEntity<>(body, body.status());
+    public ResponseEntity<ResponseDTO> findById(@RequestBody CardDTO request) {
+        try {
+            ResponseDTO body = cardService.viewCard(request);
+            return new ResponseEntity<>(body, body.status());
+        } catch (Exception exception) {
+            return new ResponseEntity<>(new ResponseDTO(null, exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @GetMapping(value = "/viewAll", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,9 +53,9 @@ public class CardApi {
         return new ResponseEntity<>(body, body.status());
     }
 
-    @DeleteMapping(value = "/deleteCard", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/deleteCard/{userId}/{cardId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public ResponseEntity<ResponseDTO> deleteCard(@RequestParam Long userId, @RequestParam long cardId) {
+    public ResponseEntity<ResponseDTO> deleteCard(@PathVariable Long userId, @PathVariable long cardId) {
         ResponseDTO body = cardService.deleteCard(cardId, userId);
         return new ResponseEntity<>(body, body.status());
     }

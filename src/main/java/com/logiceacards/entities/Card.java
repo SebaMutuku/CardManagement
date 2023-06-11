@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigInteger;
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,6 +26,10 @@ public class Card {
 
     @Column
     private String cardStatus;
+
+    @Column
+    @Temporal(TemporalType.DATE)
+    private Date createdOn;
 
     @JoinColumn(name = "userId", nullable = false, referencedColumnName = "userId", table = "User")
     private Long userId;
