@@ -1,9 +1,9 @@
 package com.logiceacards.api;
 
 
-import com.logiceacards.dto.CardDTO;
+import com.logiceacards.dto.CardRequestDTO;
 import com.logiceacards.dto.ResponseDTO;
-import com.logiceacards.services.CardService;
+import com.logiceacards.services.serviceimpl.CardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,14 +22,14 @@ public class CardApi {
 
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public ResponseEntity<ResponseDTO> addCard(@RequestBody CardDTO request) {
+    public ResponseEntity<ResponseDTO> addCard(@RequestBody CardRequestDTO request) {
         ResponseDTO body = cardService.createCard(request);
         return new ResponseEntity<>(body, body.status());
     }
 
     @GetMapping(value = "/viewById", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('USER')")
-    public ResponseEntity<ResponseDTO> findById(@RequestBody CardDTO request) {
+    public ResponseEntity<ResponseDTO> findById(@RequestBody CardRequestDTO request) {
         try {
             ResponseDTO body = cardService.viewCard(request);
             return new ResponseEntity<>(body, body.status());
@@ -48,7 +48,7 @@ public class CardApi {
 
     @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public ResponseEntity<ResponseDTO> updateCard(@RequestBody CardDTO request) {
+    public ResponseEntity<ResponseDTO> updateCard(@RequestBody CardRequestDTO request) {
         ResponseDTO body = cardService.updateCard(request);
         return new ResponseEntity<>(body, body.status());
     }

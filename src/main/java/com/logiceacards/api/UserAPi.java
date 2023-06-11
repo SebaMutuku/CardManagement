@@ -2,8 +2,7 @@ package com.logiceacards.api;
 
 import com.logiceacards.dto.ResponseDTO;
 import com.logiceacards.dto.UserDTO;
-import com.logiceacards.entities.User;
-import com.logiceacards.services.UserService;
+import com.logiceacards.services.serviceimpl.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

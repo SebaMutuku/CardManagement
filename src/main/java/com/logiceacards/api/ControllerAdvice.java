@@ -46,7 +46,7 @@ public class ControllerAdvice {
     }
 
     @ExceptionHandler({NoHandlerFoundException.class, DataIntegrityViolationException.class,
-            DataIntegrityViolationException.class, IllegalArgumentException.class, ExpiredJwtException.class})
+            DataIntegrityViolationException.class, IllegalArgumentException.class, ExpiredJwtException.class, NumberFormatException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ResponseDTO> handleInternalServerErrors(Exception exception) {
         var response = new ResponseDTO(null, exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

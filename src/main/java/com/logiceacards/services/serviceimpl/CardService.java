@@ -1,12 +1,12 @@
-package com.logiceacards.services;
+package com.logiceacards.services.serviceimpl;
 
 
-import com.logiceacards.dto.CardDTO;
+import com.logiceacards.dto.CardRequestDTO;
 import com.logiceacards.dto.ResponseDTO;
 import com.logiceacards.entities.Card;
 import com.logiceacards.repos.CardRepo;
 import com.logiceacards.repos.UserRepo;
-import com.logiceacards.services.serviceimpl.AbstractCard;
+import com.logiceacards.services.AbstractCard;
 import com.logiceacards.utils.CardStatus;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,10 +26,9 @@ public class CardService extends AbstractCard {
     private final CardRepo cardRepo;
     private final UserRepo userRepo;
 
-
     @Transactional
     @Override
-    public ResponseDTO createCard(CardDTO request) {
+    public ResponseDTO createCard(CardRequestDTO request) {
         log.info("Create Card request ----> [{}]", request);
         return cardRepo.findByCardName(request.cardName()).map(
                 card -> new ResponseDTO(card, "Card exists", HttpStatus.ALREADY_REPORTED)
@@ -50,7 +49,7 @@ public class CardService extends AbstractCard {
     }
 
     @Override
-    public ResponseDTO viewCard(CardDTO request) throws Exception {
+    public ResponseDTO viewCard(CardRequestDTO request) throws Exception {
         Date creationDate = null;
         if (request.createdOn() != null) {
             creationDate = new SimpleDateFormat().parse(request.createdOn());
@@ -66,7 +65,7 @@ public class CardService extends AbstractCard {
     }
 
     @Override
-    public ResponseDTO updateCard(CardDTO request) {
+    public ResponseDTO updateCard(CardRequestDTO request) {
         log.info("Received Request [{}]", request);
         return cardRepo.findByCardIdAndUserId(request.cardId(), request.userId()).map(
                 card -> {

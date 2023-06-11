@@ -1,4 +1,4 @@
-package com.logiceacards.services;
+package com.logiceacards.services.serviceimpl;
 
 
 import com.logiceacards.dto.ResponseDTO;
@@ -6,7 +6,7 @@ import com.logiceacards.dto.UserDTO;
 import com.logiceacards.entities.Role;
 import com.logiceacards.entities.User;
 import com.logiceacards.repos.UserRepo;
-import com.logiceacards.services.serviceimpl.AbstractUser;
+import com.logiceacards.services.AbstractUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -57,9 +57,9 @@ public class UserService extends AbstractUser {
     }
 
     @Override
-    public ResponseDTO createUser(User user) {
+    public void createUser(User user) {
         log.info("Create user request --> [{}]", user);
-        return userRepo.findByUsername(user.getUsername()).
+        userRepo.findByUsername(user.getUsername()).
                 map(foundUser -> new ResponseDTO(foundUser, "User exists", HttpStatus.ALREADY_REPORTED))
                 .orElseGet(() -> {
                     var userInstance = User.builder().username(user.getUsername()).password(passwordEncoder.encode(user.getPassword()))

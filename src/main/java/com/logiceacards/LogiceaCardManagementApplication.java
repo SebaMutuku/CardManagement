@@ -2,7 +2,7 @@ package com.logiceacards;
 
 import com.logiceacards.entities.Role;
 import com.logiceacards.entities.User;
-import com.logiceacards.services.UserService;
+import com.logiceacards.services.serviceimpl.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
