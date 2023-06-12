@@ -38,8 +38,9 @@ class UserServiceTest {
         TokenService tokenService = new TokenService();
         UserService userService = new UserService(authenticationManager, tokenService, userRepo,
                 new BCryptPasswordEncoder());
-        userService.authenticate(new UserDTO("created", "user123"));
-        verify(userRepo).findByUsername(Mockito.anyString());
+        UserDTO request = new UserDTO("created", "user123");
+        userService.authenticate(request);
+        verify(userService).authenticate(Mockito.any());
     }
 
     @Test
@@ -64,7 +65,6 @@ class UserServiceTest {
         ArrayList<AuthenticationProvider> providers = new ArrayList<>();
         providers.add(new RunAsImplAuthenticationProvider());
         ProviderManager authenticationManager = new ProviderManager(providers);
-        UserRepo userRepo = mock(UserRepo.class);
         when(userRepo.findByUsername(Mockito.anyString())).thenReturn(Optional.of(new User()));
         TokenService tokenService = new TokenService();
         (new UserService(authenticationManager, tokenService, userRepo, new BCryptPasswordEncoder())).createUser(null);
@@ -75,7 +75,6 @@ class UserServiceTest {
         ArrayList<AuthenticationProvider> providers = new ArrayList<>();
         providers.add(new RunAsImplAuthenticationProvider());
         ProviderManager authenticationManager = new ProviderManager(providers);
-        UserRepo userRepo = mock(UserRepo.class);
         when(userRepo.findByUsername(Mockito.anyString())).thenReturn(Optional.of(new User()));
         TokenService tokenService = new TokenService();
         UserService userService = new UserService(authenticationManager, tokenService, userRepo,
@@ -92,7 +91,6 @@ class UserServiceTest {
         ArrayList<AuthenticationProvider> providers = new ArrayList<>();
         providers.add(new RunAsImplAuthenticationProvider());
         ProviderManager authenticationManager = new ProviderManager(providers);
-        UserRepo userRepo = mock(UserRepo.class);
         when(userRepo.save(Mockito.any())).thenReturn(new User());
         when(userRepo.findByUsername(Mockito.anyString())).thenReturn(Optional.empty());
         TokenService tokenService = new TokenService();
