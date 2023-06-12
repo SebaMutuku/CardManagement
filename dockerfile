@@ -8,6 +8,6 @@ COPY src ./src
 RUN mvn package -DskipTests
 FROM openjdk:17-alpine
 WORKDIR /app
-COPY --from=build /app/target//LogiceaCardManagement-0.0.1-SNAPSHOT.jar /LogiceaCardManagement-0.0.1-SNAPSHOT.jar
+COPY --from=build /app/target/LogiceaCardManagement-0.0.1-SNAPSHOT.jar /LogiceaCardManagement-0.0.1-SNAPSHOT.jar
 EXPOSE 9096
 CMD ["java", "-jar", "app.jar"]
