@@ -10,9 +10,9 @@ import com.logiceacards.services.AbstractCard;
 import com.logiceacards.utils.CardStatus;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -49,15 +49,15 @@ public class CardService extends AbstractCard {
     }
 
     @Override
-    public ResponseDTO viewCard(CardRequestDTO request) throws Exception {
+    public ResponseDTO viewCard(CardRequestDTO request, int pageSize) throws Exception {
         Date creationDate = null;
         if (request.createdOn() != null) {
             creationDate = new SimpleDateFormat().parse(request.createdOn());
         }
-        Pageable sortConfigs =
-                PageRequest.of(0, 20);
+        Pageable page =
+                PageRequest.ofSize(pageSize);
         ResponseDTO response = cardRepo.findByUserIdOrCardNameOrCreatedOnOrCardStatusOrCardColorOrderByCardNameAscCardColorAscCardStatusDescCreatedOnDesc(request.userId(),
-                        request.cardName(), creationDate, request.cardStatus(), request.cardColor()).map(
+                        request.cardName(), creationDate, request.cardStatus(), request.cardColor(), page).map(
                         card -> new ResponseDTO(card, "Success", HttpStatus.FOUND))
                 .orElse((new ResponseDTO(null, "No card exists", HttpStatus.NOT_FOUND)));
         log.info("Validation response ----> [{}]", response);
@@ -95,9 +95,9 @@ public class CardService extends AbstractCard {
 
 
     @Override
-    public ResponseDTO viewAllCards() {
-        Optional<ResponseDTO> responseDTO = cardRepo.findAll().stream().map(card -> new ResponseDTO(card, "Success", HttpStatus.OK)).findFirst();
-        log.info("Card response response ---> [{}]", responseDTO);
-        return responseDTO.get();
+    public Page<ResponseDTO> viewAllCards(int pageSize) {
+        Page<ResponseDTO> response = cardRepo.findAll(Pageable.ofSize(pageSize)).map(card -> new ResponseDTO(card, "Success", HttpStatus.OK));
+        log.info("Card response response ---> [{}]", response);
+        return response;
     }
 }
