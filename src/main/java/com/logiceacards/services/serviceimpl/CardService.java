@@ -10,6 +10,7 @@ import com.logiceacards.services.AbstractCard;
 import com.logiceacards.utils.CardStatus;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -54,14 +55,14 @@ public class CardService extends AbstractCard {
         if (request.createdOn() != null) {
             creationDate = new SimpleDateFormat().parse(request.createdOn());
         }
-        Pageable page =
-                PageRequest.ofSize(pageSize);
-        ResponseDTO response = cardRepo.findByUserIdOrCardNameOrCreatedOnOrCardStatusOrCardColorOrderByCardNameAscCardColorAscCardStatusDescCreatedOnDesc(request.userId(),
-                        request.cardName(), creationDate, request.cardStatus(), request.cardColor(), page).map(
-                        card -> new ResponseDTO(card, "Success", HttpStatus.FOUND))
-                .orElse((new ResponseDTO(null, "No card exists", HttpStatus.NOT_FOUND)));
+        Pageable page = PageRequest.ofSize(pageSize);
+        List<Card> response = cardRepo.findByUserIdOrCardNameOrCreatedOnOrCardStatusOrCardColorOrderByCardNameAscCardColorAscCardStatusDescCreatedOnDesc(request.userId(),
+                request.cardName(), creationDate, request.cardStatus(), request.cardColor(), page).stream().toList();
         log.info("Validation response ----> [{}]", response);
-        return response;
+        if (!response.isEmpty()) {
+            return new ResponseDTO(response, "Success", HttpStatus.FOUND);
+        }
+        return new ResponseDTO(null, "No card exists", HttpStatus.NOT_FOUND);
     }
 
     @Override
@@ -95,8 +96,12 @@ public class CardService extends AbstractCard {
 
 
     @Override
-    public Page<ResponseDTO> viewAllCards(int pageSize) {
-        Page<ResponseDTO> response = cardRepo.findAll(Pageable.ofSize(pageSize)).map(card -> new ResponseDTO(card, "Success", HttpStatus.OK));
+    public ResponseDTO viewAllCards(int pageSize) {
+        ResponseDTO response;
+        Page<Card> cards = cardRepo.findAll(Pageable.ofSize(pageSize));
+        if (cards.isEmpty())
+            response = new ResponseDTO(null, "Success", HttpStatus.NOT_FOUND);
+        else response = new ResponseDTO(cards, "Success", HttpStatus.OK);
         log.info("Card response response ---> [{}]", response);
         return response;
     }

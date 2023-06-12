@@ -13,5 +13,5 @@ public abstract class AbstractCard {
 
     public abstract ResponseDTO deleteCard(long cardId, long userId);
 
-    public abstract Page<ResponseDTO> viewAllCards(int pageSize);
+    public abstract ResponseDTO viewAllCards(int pageSize);
 }

@@ -73,7 +73,7 @@ class CardServiceTest {
     public void testViewCardReturnsPayloadWithSuccess() throws Exception {
         Card card = new Card();
         when(cardRepo.findByUserIdOrCardNameOrCreatedOnOrCardStatusOrCardColorOrderByCardNameAscCardColorAscCardStatusDescCreatedOnDesc(
-                anyLong(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                anyLong(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),Mockito.any()))
                 .thenReturn(Optional.of(card));
         CardService cardService = new CardService(cardRepo, userRepo);
         ResponseDTO actualViewCardResult = cardService
