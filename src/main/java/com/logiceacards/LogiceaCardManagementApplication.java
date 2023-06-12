@@ -3,6 +3,7 @@ package com.logiceacards;
 import com.logiceacards.entities.Role;
 import com.logiceacards.entities.User;
 import com.logiceacards.services.serviceimpl.UserService;
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import java.util.Date;
 
 @SpringBootApplication
+@EnableEncryptableProperties
 public class LogiceaCardManagementApplication {
 
     public static void main(String[] args) {

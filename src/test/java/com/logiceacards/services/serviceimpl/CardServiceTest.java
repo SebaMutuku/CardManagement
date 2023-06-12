@@ -70,7 +70,7 @@ class CardServiceTest {
         assertEquals(0L, ((Card) payloadResult).getCardId());
         verify(cardRepo).save(Mockito.any());
         verify(cardRepo).findByCardName(Mockito.any());
-        verify(userRepo).findById(Mockito.<Long>any());
+        verify(userRepo).findById(Mockito.anyLong());
     }
 
 

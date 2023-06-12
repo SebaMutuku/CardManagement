@@ -16,7 +16,7 @@ spring:
     url: jdbc:mysql://localhost:3306/logiceaCard
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: logicea
-    password: logicea123
+    password: ENC(RrFolCQ5oXZtAKhRJ7Q2c+6CGWK8AGLiciiz/1hYyTUcgZArel2IAJq8DWhbDwC7)
 mvc:
   throw-exception-if-no-handler-found: true
 
@@ -26,3 +26,7 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+jasypt:
+  encryptor:
+    password: logicea
