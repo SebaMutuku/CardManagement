@@ -27,5 +27,5 @@ Navigate to the project directory and :
 Make sure the application is up and access it via link the endpoint `URI/swagger-ui/index.html e.g http://localhost:9097/swagger-ui/index.html`
 
 ## Encryption
-This is done using library ```jasypt```. Read more about how to do this here ```https://medium.com/@javatechie/spring-boot-password-encryption-using-jasypt-e92eed7343ab```
+This is done using library ```jasypt```. Read more about how to do this here https://medium.com/@javatechie/spring-boot-password-encryption-using-jasypt-e92eed7343ab
 You also need to add encyption key in your maven environment by running `mvn -Djasypt.encryptor.password=your encryption key`. For now, I have added it to the ```properties.yml```
