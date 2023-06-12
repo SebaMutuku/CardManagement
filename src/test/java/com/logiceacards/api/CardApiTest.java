@@ -187,7 +187,7 @@ class CardApiTest {
         Card card = new Card();
         when(cardRepo.findByCardIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(card));
         CardApi cardApi = new CardApi(new CardService(cardRepo, userRepo));
-        ResponseEntity<ResponseDTO> actualUpdateCardResult = cardApi.updateCard(
+        ResponseEntity<ResponseDTO> actualUpdateCardResult = cardApi.updateByUserId(
                 new CardRequestDTO("Card Name", "Card Color", 1L, 1L, "Card Status", "Jan 1, 2020 8:00am GMT+0100"));
         assertTrue(actualUpdateCardResult.hasBody());
         assertTrue(actualUpdateCardResult.getHeaders().isEmpty());
@@ -208,15 +208,15 @@ class CardApiTest {
     @Test
     void testUpdateCardFailsIfUserIsWrong() {
         CardService cardService = mock(CardService.class);
-        when(cardService.updateCard(Mockito.any()))
+        when(cardService.updateByUserId(Mockito.any()))
                 .thenReturn(new ResponseDTO("Payload", "Not all who wander are lost", HttpStatus.CONTINUE));
         CardApi cardApi = new CardApi(cardService);
-        ResponseEntity<ResponseDTO> actualUpdateCardResult = cardApi.updateCard(
+        ResponseEntity<ResponseDTO> actualUpdateCardResult = cardApi.updateByUserId(
                 new CardRequestDTO("Card Name", "Card Color", 1L, 1L, "Card Status", "Jan 1, 2020 8:00am GMT+0100"));
         assertTrue(actualUpdateCardResult.hasBody());
         assertTrue(actualUpdateCardResult.getHeaders().isEmpty());
         assertEquals(100, actualUpdateCardResult.getStatusCode().value());
-        verify(cardService).updateCard(Mockito.any());
+        verify(cardService).updateByUserId(Mockito.any());
     }
 
 
@@ -224,7 +224,7 @@ class CardApiTest {
     void testDeleteCardDeletesCard() {
         when(cardRepo.findByCardIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(new Card()));
         ResponseEntity<ResponseDTO> actualDeleteCardResult = (new CardApi(
-                new CardService(cardRepo, userRepo))).deleteCard(1L, 1L);
+                new CardService(cardRepo, userRepo))).deleteByUserId(1L, 1L);
         assertTrue(actualDeleteCardResult.hasBody());
         assertTrue(actualDeleteCardResult.getHeaders().isEmpty());
         assertEquals(200, actualDeleteCardResult.getStatusCode().value());
@@ -239,7 +239,7 @@ class CardApiTest {
     void testDeleteCardFailsWithCardNotFound() {
         when(cardRepo.findByCardIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.empty());
         ResponseEntity<ResponseDTO> actualDeleteCardResult = (new CardApi(
-                new CardService(cardRepo, userRepo))).deleteCard(1L, 1L);
+                new CardService(cardRepo, userRepo))).deleteByUserId(1L, 1L);
         assertTrue(actualDeleteCardResult.hasBody());
         assertTrue(actualDeleteCardResult.getHeaders().isEmpty());
         assertEquals(417, actualDeleteCardResult.getStatusCode().value());

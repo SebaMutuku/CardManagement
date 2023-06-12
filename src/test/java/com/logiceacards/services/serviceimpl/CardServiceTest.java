@@ -111,7 +111,7 @@ class CardServiceTest {
         Card card = new Card();
         when(cardRepo.findByCardIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(card));
         CardService cardService = new CardService(cardRepo, userRepo);
-        ResponseDTO actualUpdateCardResult = cardService.updateCard(
+        ResponseDTO actualUpdateCardResult = cardService.updateByUserId(
                 new CardRequestDTO("Card Name", "Card Color", 1L, 1L, "Card Status", "Jan 1, 2020 8:00am GMT+0100"));
         assertEquals("Successfully updated card", actualUpdateCardResult.message());
         assertEquals(HttpStatus.CREATED, actualUpdateCardResult.status());
@@ -129,7 +129,7 @@ class CardServiceTest {
         when(cardRepo.save(Mockito.any())).thenReturn(new Card());
         when(cardRepo.findByCardIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.empty());
         CardService cardService = new CardService(cardRepo, userRepo);
-        ResponseDTO actualUpdateCardResult = cardService.updateCard(
+        ResponseDTO actualUpdateCardResult = cardService.updateByUserId(
                 new CardRequestDTO("Card Name", "Card Color", 1L, 1L, "Card Status", "Jan 1, 2020 8:00am GMT+0100"));
         assertEquals("Card not found", actualUpdateCardResult.message());
         assertEquals(HttpStatus.NOT_FOUND, actualUpdateCardResult.status());
@@ -140,7 +140,7 @@ class CardServiceTest {
     @Test
     public void testDeleteCardReturnsPayloadWithSuccess() {
         when(cardRepo.findByCardIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(new Card()));
-        ResponseDTO actualDeleteCardResult = (new CardService(cardRepo, userRepo)).deleteCard(1L, 1L);
+        ResponseDTO actualDeleteCardResult = (new CardService(cardRepo, userRepo)).deleteByUserId(1L, 1L);
         assertEquals("Successfully deleted card with id 1", actualDeleteCardResult.message());
         assertEquals(HttpStatus.OK, actualDeleteCardResult.status());
         assertNull(actualDeleteCardResult.payload());
@@ -150,7 +150,7 @@ class CardServiceTest {
     @Test
     public void testDeleteCardReturnsPayloadWithCardNotFound() {
         when(cardRepo.findByCardIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.empty());
-        ResponseDTO actualDeleteCardResult = (new CardService(cardRepo, userRepo)).deleteCard(1L, 1L);
+        ResponseDTO actualDeleteCardResult = (new CardService(cardRepo, userRepo)).deleteByUserId(1L, 1L);
         assertEquals("Card with id 1 not found", actualDeleteCardResult.message());
         assertEquals(HttpStatus.EXPECTATION_FAILED, actualDeleteCardResult.status());
         assertNull(actualDeleteCardResult.payload());

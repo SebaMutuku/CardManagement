@@ -8,9 +8,6 @@ import com.logiceacards.repos.CardRepo;
 import com.logiceacards.repos.UserRepo;
 import com.logiceacards.services.AbstractCard;
 import com.logiceacards.utils.CardStatus;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,6 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -68,7 +69,24 @@ public class CardService extends AbstractCard {
     }
 
     @Override
-    public ResponseDTO updateCard(CardRequestDTO request) {
+    public ResponseDTO findByUserId(long userId, long cardId) {
+        log.info("Delete--> cardId [{}] UserId ----> [{}]", userId, cardId);
+        return cardRepo.findByCardIdAndUserId(cardId, userId).map(
+                card -> {
+                    ResponseDTO response = new ResponseDTO(card, "Successful", HttpStatus.FOUND);
+                    log.info("SingleCard response [{}]", response);
+                    return response;
+                }
+        ).orElseGet(() -> {
+            ResponseDTO response = new ResponseDTO(null, "Card with id " + cardId + " not found", HttpStatus.NOT_FOUND);
+            log.info("SingleCard card response [{}]", response);
+            return response;
+        });
+
+    }
+
+    @Override
+    public ResponseDTO updateByUserId(CardRequestDTO request) {
         log.info("Received Request [{}]", request);
         return cardRepo.findByCardIdAndUserId(request.cardId(), request.userId()).map(
                 card -> {
@@ -81,10 +99,11 @@ public class CardService extends AbstractCard {
     }
 
     @Override
-    public ResponseDTO deleteCard(long cardId, long userId) {
+    public ResponseDTO deleteByUserId(long cardId, long userId) {
         log.info("Delete--> cardId [{}] UserId ----> [{}]", cardId, userId);
         return cardRepo.findByCardIdAndUserId(cardId, userId).map(
                 card -> {
+                    cardRepo.delete(card);
                     ResponseDTO response = new ResponseDTO(null, "Successfully deleted card with id " + cardId, HttpStatus.OK);
                     log.info("Delete card response [{}]", response);
                     return response;
