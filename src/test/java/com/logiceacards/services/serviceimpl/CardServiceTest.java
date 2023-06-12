@@ -28,7 +28,7 @@ class CardServiceTest {
     private UserRepo userRepo;
 
     @Test
-    void testCreateCardReturnsCardExists() {
+    public void testCreateCardReturnsCardExists() {
         Card card = new Card();
         when(cardRepo.findByCardName(Mockito.any())).thenReturn(Optional.of(card));
         CardService cardService = new CardService(cardRepo, userRepo);
@@ -41,7 +41,7 @@ class CardServiceTest {
     }
 
     @Test
-    void testCreateCardReturnsPayloadWithSuccess() {
+    public void testCreateCardReturnsPayloadWithSuccess() {
         when(cardRepo.save(Mockito.any())).thenReturn(new Card());
         when(cardRepo.findByCardName(Mockito.any())).thenReturn(Optional.empty());
         when(userRepo.findById(Mockito.<Long>any())).thenReturn(Optional.of(new User()));
@@ -65,7 +65,7 @@ class CardServiceTest {
 
 
     @Test
-    void testViewCardReturnsPayloadWithSuccess() throws Exception {
+    public void testViewCardReturnsPayloadWithSuccess() throws Exception {
         Card card = new Card();
         when(cardRepo.findByUserIdOrCardNameOrCreatedOnOrCardStatusOrCardColorOrderByCardNameAscCardColorAscCardStatusDescCreatedOnDesc(
                 anyLong(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
@@ -81,7 +81,7 @@ class CardServiceTest {
     }
 
     @Test
-    void testViewCardFailsToFindACard() throws Exception {
+    public void testViewCardFailsToFindACard() throws Exception {
         when(cardRepo.findByUserIdOrCardNameOrCreatedOnOrCardStatusOrCardColorOrderByCardNameAscCardColorAscCardStatusDescCreatedOnDesc(
                 anyLong(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(Optional.empty());
@@ -97,7 +97,7 @@ class CardServiceTest {
 
 
     @Test
-    void testUpdateCardReturnsPayloadWithSuccess() {
+    public void testUpdateCardReturnsPayloadWithSuccess() {
         when(cardRepo.save(Mockito.any())).thenReturn(new Card());
         Card card = new Card();
         when(cardRepo.findByCardIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(card));
@@ -116,7 +116,7 @@ class CardServiceTest {
     }
 
     @Test
-    void testUpdateCardReturnsPayloadWithCardNotFound() {
+    public void testUpdateCardReturnsPayloadWithCardNotFound() {
         when(cardRepo.save(Mockito.any())).thenReturn(new Card());
         when(cardRepo.findByCardIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.empty());
         CardService cardService = new CardService(cardRepo, userRepo);
@@ -129,7 +129,7 @@ class CardServiceTest {
     }
 
     @Test
-    void testDeleteCardReturnsPayloadWithSuccess() {
+    public void testDeleteCardReturnsPayloadWithSuccess() {
         when(cardRepo.findByCardIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(new Card()));
         ResponseDTO actualDeleteCardResult = (new CardService(cardRepo, userRepo)).deleteCard(1L, 1L);
         assertEquals("Successfully deleted card with id 1", actualDeleteCardResult.message());
@@ -139,7 +139,7 @@ class CardServiceTest {
     }
 
     @Test
-    void testDeleteCardReturnsPayloadWithCardNotFound() {
+    public void testDeleteCardReturnsPayloadWithCardNotFound() {
         when(cardRepo.findByCardIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.empty());
         ResponseDTO actualDeleteCardResult = (new CardService(cardRepo, userRepo)).deleteCard(1L, 1L);
         assertEquals("Card with id 1 not found", actualDeleteCardResult.message());
@@ -150,7 +150,7 @@ class CardServiceTest {
 
 
     @Test
-    void testViewAllCards() {
+    public void testViewAllCards() {
         ArrayList<Card> cardList = new ArrayList<>();
         Card card = new Card();
         cardList.add(card);
