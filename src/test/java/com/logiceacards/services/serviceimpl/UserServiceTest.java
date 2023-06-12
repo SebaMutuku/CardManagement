@@ -12,9 +12,9 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.intercept.RunAsImplAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,7 +35,7 @@ class UserServiceTest {
     @Test
     public void testAuthenticateAuthenticatesSuccessfully() {
         ArrayList<AuthenticationProvider> providers = new ArrayList<>();
-        providers.add(new RunAsImplAuthenticationProvider());
+        providers.add(new DaoAuthenticationProvider());
         ProviderManager authenticationManager = new ProviderManager(providers);
         when(userRepo.findByUsername(Mockito.anyString())).thenReturn(Optional.of(new User()));
         TokenService tokenService = new TokenService();
@@ -49,7 +49,7 @@ class UserServiceTest {
     @Test
     public void testAuthenticateReturnsUnAuthorizedAccess() {
         ArrayList<AuthenticationProvider> providers = new ArrayList<>();
-        providers.add(new RunAsImplAuthenticationProvider());
+        providers.add(new DaoAuthenticationProvider());
         ProviderManager authenticationManager = new ProviderManager(providers);
         when(userRepo.findByUsername(Mockito.anyString())).thenReturn(Optional.empty());
         TokenService tokenService = new TokenService();
@@ -66,7 +66,7 @@ class UserServiceTest {
     @Test
     public void testCreateUserWithNullUer() {
         ArrayList<AuthenticationProvider> providers = new ArrayList<>();
-        providers.add(new RunAsImplAuthenticationProvider());
+        providers.add(new DaoAuthenticationProvider());
         ProviderManager authenticationManager = new ProviderManager(providers);
         when(userRepo.findByUsername(Mockito.anyString())).thenReturn(Optional.of(new User()));
         TokenService tokenService = new TokenService();
@@ -76,7 +76,7 @@ class UserServiceTest {
     @Test
     public void testCreateUserWithANonNullUser() {
         ArrayList<AuthenticationProvider> providers = new ArrayList<>();
-        providers.add(new RunAsImplAuthenticationProvider());
+        providers.add(new DaoAuthenticationProvider());
         ProviderManager authenticationManager = new ProviderManager(providers);
         when(userRepo.findByUsername(Mockito.anyString())).thenReturn(Optional.of(new User()));
         TokenService tokenService = new TokenService();
@@ -92,7 +92,7 @@ class UserServiceTest {
     @Test
     public void testCreateUserWithAUserAndPassword() {
         ArrayList<AuthenticationProvider> providers = new ArrayList<>();
-        providers.add(new RunAsImplAuthenticationProvider());
+        providers.add(new DaoAuthenticationProvider());
         ProviderManager authenticationManager = new ProviderManager(providers);
         when(userRepo.save(Mockito.any())).thenReturn(new User());
         when(userRepo.findByUsername(Mockito.anyString())).thenReturn(Optional.empty());

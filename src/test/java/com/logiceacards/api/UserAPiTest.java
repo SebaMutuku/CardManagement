@@ -13,9 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.intercept.RunAsImplAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,7 +32,7 @@ class UserAPiTest {
     private UserRepo userRepo;
 
     @Test
-    void testAuthenticateSuccessfully() {
+    public void testAuthenticateSuccessfully() {
         TokenService tokenService = new TokenService();
         UserApi userAPi = new UserApi(
                 new UserService(mock(ProviderManager.class), tokenService, userRepo, new BCryptPasswordEncoder()));
@@ -40,9 +40,9 @@ class UserAPiTest {
     }
 
     @Test
-    void testAuthenticateReturnsBadCredentials() {
+    public void testAuthenticateReturnsBadCredentials() {
         ArrayList<AuthenticationProvider> providers = new ArrayList<>();
-        providers.add(new RunAsImplAuthenticationProvider());
+        providers.add(new DaoAuthenticationProvider());
         ProviderManager authenticationManager = new ProviderManager(providers);
         when(userRepo.findByUsername(Mockito.any())).thenReturn(Optional.empty());
         TokenService tokenService = new TokenService();
@@ -60,7 +60,7 @@ class UserAPiTest {
     }
 
     @Test
-    void testAuthenticateReturnsCorrectMessage() {
+    public void testAuthenticateReturnsCorrectMessage() {
         UserService userService = mock(UserService.class);
         when(userService.authenticate(Mockito.any()))
                 .thenReturn(new ResponseDTO("Payload", "Not all who wander are lost", HttpStatus.CONTINUE));
