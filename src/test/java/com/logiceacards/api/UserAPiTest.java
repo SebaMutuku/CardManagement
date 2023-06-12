@@ -2,7 +2,6 @@ package com.logiceacards.api;
 
 import com.logiceacards.dto.ResponseDTO;
 import com.logiceacards.dto.UserDTO;
-import com.logiceacards.entities.User;
 import com.logiceacards.repos.UserRepo;
 import com.logiceacards.services.serviceimpl.TokenService;
 import com.logiceacards.services.serviceimpl.UserService;
@@ -27,6 +26,7 @@ import static org.mockito.Mockito.*;
 class UserAPiTest {
     @MockBean
     private UserRepo userRepo;
+
     @Test
     void testAuthenticateSuccessfully() {
         TokenService tokenService = new TokenService();

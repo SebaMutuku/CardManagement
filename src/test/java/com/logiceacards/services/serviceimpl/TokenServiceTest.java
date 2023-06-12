@@ -52,22 +52,9 @@ class TokenServiceTest {
     @Test
     @Disabled("TODO: Complete this test")
     void testExtractClaim() {
-        // TODO: Complete this test.
-        //   Reason: R005 Unable to load class.
-        //   Class: reactor.core.publisher.Mono
-        //   Please check that the class is available on your test runtime classpath.
-        //   See https://diff.blue/R005 to resolve this issue.
-
-        // Arrange
-        // TODO: Populate arranged inputs
         String token = "";
         Function<Claims, Object> claimsResolver = null;
-
-        // Act
         Object actualExtractClaimResult = this.tokenService.extractClaim(token, claimsResolver);
-
-        // Assert
-        // TODO: Add assertions on result
     }
 
     /**
