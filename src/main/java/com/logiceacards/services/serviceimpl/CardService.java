@@ -75,7 +75,7 @@ public class CardService extends AbstractCard {
                     card.setCardStatus(request.cardStatus());
                     cardRepo.save(card);
                     return new ResponseDTO(card, "Successfully updated card", HttpStatus.CREATED);
-                }).orElseGet(() -> new ResponseDTO(null, "Card not found", HttpStatus.CREATED));
+                }).orElseGet(() -> new ResponseDTO(null, "Card not found", HttpStatus.NOT_FOUND));
     }
 
     @Override

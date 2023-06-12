@@ -6,7 +6,6 @@ import com.logiceacards.dto.ResponseDTO;
 import com.logiceacards.services.serviceimpl.CardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,9 +48,9 @@ public class CardApi {
 
     @GetMapping(value = "/viewAll/{pageSize}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<Page<ResponseDTO>> viewAll(@PathVariable int pageSize) {
-        Page<ResponseDTO> body = cardService.viewAllCards(pageSize);
-        return new ResponseEntity<>(body, HttpStatus.OK);
+    public ResponseEntity<ResponseDTO> viewAll(@PathVariable int pageSize) {
+        ResponseDTO body = cardService.viewAllCards(pageSize);
+        return new ResponseEntity<>(body, body.status());
     }
 
     @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

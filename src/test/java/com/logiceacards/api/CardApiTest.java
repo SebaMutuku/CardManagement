@@ -148,7 +148,7 @@ class CardApiTest {
     @Test
     void testFindByIdReturnsNull() throws Exception {
         CardService cardService = mock(CardService.class);
-        when(cardService.viewCard(Mockito.any())).thenReturn(null);
+        when(cardService.viewCard(Mockito.any(),Mockito.anyInt())).thenReturn(null);
         CardApi cardApi = new CardApi(cardService);
         ResponseEntity<ResponseDTO> actualFindByIdResult = cardApi.findById(
                 new CardRequestDTO("Card Name", "Card Color", 1L, 1L, "Card Status", "Jan 1, 2020 8:00am GMT+0100"));
@@ -160,7 +160,7 @@ class CardApiTest {
         assertEquals("Cannot invoke \"com.logiceacards.dto.ResponseDTO.status()\" because \"body\" is null",
                 body.message());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, body.status());
-        verify(cardService).viewCard(Mockito.any());
+        verify(cardService).viewCard(Mockito.any(),Mockito.anyInt());
     }
 
 
@@ -171,7 +171,7 @@ class CardApiTest {
         cardList.add(card);
         when(cardRepo.findAll()).thenReturn(cardList);
         ResponseEntity<ResponseDTO> actualViewAllResult = (new CardApi(new CardService(cardRepo, userRepo)))
-                .viewAll();
+                .viewAll(Mockito.anyInt());
         assertTrue(actualViewAllResult.hasBody());
         assertTrue(actualViewAllResult.getHeaders().isEmpty());
         assertEquals(200, actualViewAllResult.getStatusCode().value());
