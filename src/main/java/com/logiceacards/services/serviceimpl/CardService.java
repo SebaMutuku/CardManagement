@@ -37,10 +37,11 @@ public class CardService extends AbstractCard {
             ResponseDTO dto;
             Card card;
             if (request.cardColor() != null && request.cardColor().startsWith("#") && request.cardColor().length() == 7) {
-                card = Card.builder().cardName(request.cardName()).cardColor(request.cardColor())
+                card = Card.builder().cardName(request.cardName()).cardColor(request.cardColor()).createdOn(new Date())
                         .cardStatus(CardStatus.TODO.name()).userId(user.getUserId()).build();
             } else
-                card = Card.builder().cardName(request.cardName()).userId(user.getUserId()).cardStatus(CardStatus.TODO.name()).build();
+                card = Card.builder().cardName(request.cardName()).userId(user.getUserId())
+                        .cardStatus(CardStatus.TODO.name()).createdOn(new Date()).build();
             cardRepo.save(card);
             dto = new ResponseDTO(card, "Success", HttpStatus.CREATED);
             log.info("Student response ---> [{}]", dto);
@@ -56,13 +57,14 @@ public class CardService extends AbstractCard {
             creationDate = new SimpleDateFormat().parse(request.createdOn());
         }
         Pageable page = PageRequest.ofSize(pageSize);
-        List<Card> response = cardRepo.findByUserIdOrCardNameOrCreatedOnOrCardStatusOrCardColorOrderByCardNameAscCardColorAscCardStatusDescCreatedOnDesc(request.userId(),
+        List<Card> cards = cardRepo.findByUserIdOrCardNameOrCreatedOnOrCardStatusOrCardColorOrderByCardNameAscCardColorAscCardStatusDescCreatedOnDesc(request.userId(),
                 request.cardName(), creationDate, request.cardStatus(), request.cardColor(), page).stream().toList();
-        log.info("Validation response ----> [{}]", response);
-        if (!response.isEmpty()) {
-            return new ResponseDTO(response, "Success", HttpStatus.FOUND);
-        }
-        return new ResponseDTO(null, "No card exists", HttpStatus.NOT_FOUND);
+        ResponseDTO response;
+        if (!cards.isEmpty()) {
+            response = new ResponseDTO(cards, "Success", HttpStatus.FOUND);
+        } else response = new ResponseDTO(null, "No card exists", HttpStatus.NOT_FOUND);
+        log.info("View Card response ----> [{}]", response);
+        return response;
     }
 
     @Override

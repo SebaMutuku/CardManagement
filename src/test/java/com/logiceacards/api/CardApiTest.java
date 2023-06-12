@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -69,7 +70,7 @@ class CardApiTest {
         assertEquals("Success", body.message());
         assertEquals(HttpStatus.CREATED, body.status());
         assertEquals(0L, ((Card) payloadResult).getUserId());
-        assertNull(((Card) payloadResult).getCreatedOn());
+        assertNotNull(((Card) payloadResult).getCreatedOn());
         assertEquals("TODO", ((Card) payloadResult).getCardStatus());
         assertEquals("Card Name", ((Card) payloadResult).getCardName());
         assertEquals(0L, ((Card) payloadResult).getCardId());
@@ -114,33 +115,31 @@ class CardApiTest {
         verify(cardService).createCard(Mockito.any());
     }
 
-//    @Test
-//    void testFindById() {
-//        CardApi cardApi = new CardApi(new CardService(cardRepo, userRepo));
-//        ResponseEntity<ResponseDTO> actualFindByIdResult = cardApi.findById(
-//                new CardRequestDTO("Card Name", "Card Color", 1L, 1L, "Card Status", "Jan 1, 2020 8:00am GMT+0100"));
-//        assertTrue(actualFindByIdResult.hasBody());
-//        assertTrue(actualFindByIdResult.getHeaders().isEmpty());
-//        assertEquals(500, actualFindByIdResult.getStatusCode().value());
-//        ResponseDTO body = actualFindByIdResult.getBody();
-//        assertNull(body.payload());
-//        assertEquals("Unparseable date: \"Jan 1, 2020 8:00am GMT+0100\"", body.message());
-//        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, body.status());
-//    }
-
     @Test
-    void testFindByIdReturnsError() {
-
-        CardApi cardApi = new CardApi(null);
+    void testFindById() {
+        CardApi cardApi = new CardApi(new CardService(cardRepo, userRepo));
         ResponseEntity<ResponseDTO> actualFindByIdResult = cardApi.findById(
-                new CardRequestDTO("Card Name", "Card Color", 1L, 1L, "Card Status", "Jan 1, 2020 8:00am GMT+0100"));
+                new CardRequestDTO("Card Name", "Card Color", 1L, 1L, "Card Status", "Jan 1, 2020 8:00am GMT+0100"),2);
         assertTrue(actualFindByIdResult.hasBody());
         assertTrue(actualFindByIdResult.getHeaders().isEmpty());
         assertEquals(500, actualFindByIdResult.getStatusCode().value());
         ResponseDTO body = actualFindByIdResult.getBody();
         assertNull(body.payload());
-        assertEquals("Cannot invoke \"com.logiceacards.services.serviceimpl.CardService.viewCard(com.logiceacards.dto"
-                + ".CardRequestDTO)\" because \"this.cardService\" is null", body.message());
+        assertEquals("Unparseable date: \"Jan 1, 2020 8:00am GMT+0100\"", body.message());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, body.status());
+    }
+
+    @Test
+    void testFindByIdReturnsError() {
+        CardApi cardApi = new CardApi(null);
+        ResponseEntity<ResponseDTO> actualFindByIdResult = cardApi.findById(
+                new CardRequestDTO("Card Name", "Card Color", 1L, 1L, "Card Status", "Jan 1, 2020 8:00am GMT+0100"),5);
+        assertTrue(actualFindByIdResult.hasBody());
+        assertTrue(actualFindByIdResult.getHeaders().isEmpty());
+        assertEquals(500, actualFindByIdResult.getStatusCode().value());
+        ResponseDTO body = actualFindByIdResult.getBody();
+        assertNull(body.payload());
+        assertEquals("Cannot invoke \"com.logiceacards.services.serviceimpl.CardService.viewCard(com.logiceacards.dto.CardRequestDTO, int)\" because \"this.cardService\" is null", body.message());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, body.status());
     }
 
@@ -151,7 +150,7 @@ class CardApiTest {
         when(cardService.viewCard(Mockito.any(),Mockito.anyInt())).thenReturn(null);
         CardApi cardApi = new CardApi(cardService);
         ResponseEntity<ResponseDTO> actualFindByIdResult = cardApi.findById(
-                new CardRequestDTO("Card Name", "Card Color", 1L, 1L, "Card Status", "Jan 1, 2020 8:00am GMT+0100"));
+                new CardRequestDTO("Card Name", "Card Color", 1L, 1L, "Card Status", "Jan 1, 2020 8:00am GMT+0100"),1);
         assertTrue(actualFindByIdResult.hasBody());
         assertTrue(actualFindByIdResult.getHeaders().isEmpty());
         assertEquals(500, actualFindByIdResult.getStatusCode().value());
@@ -171,7 +170,7 @@ class CardApiTest {
         cardList.add(card);
         when(cardRepo.findAll()).thenReturn(cardList);
         ResponseEntity<ResponseDTO> actualViewAllResult = (new CardApi(new CardService(cardRepo, userRepo)))
-                .viewAll(Mockito.anyInt());
+                .viewAll(1);
         assertTrue(actualViewAllResult.hasBody());
         assertTrue(actualViewAllResult.getHeaders().isEmpty());
         assertEquals(200, actualViewAllResult.getStatusCode().value());

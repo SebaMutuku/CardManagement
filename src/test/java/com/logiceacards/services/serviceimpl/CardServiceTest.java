@@ -7,18 +7,23 @@ import com.logiceacards.entities.User;
 import com.logiceacards.repos.CardRepo;
 import com.logiceacards.repos.UserRepo;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -59,7 +64,7 @@ class CardServiceTest {
         assertTrue(payloadResult instanceof Card);
         assertNull(((Card) payloadResult).getCardColor());
         assertEquals(0L, ((Card) payloadResult).getUserId());
-        assertNull(((Card) payloadResult).getCreatedOn());
+        assertNotNull(((Card) payloadResult).getCreatedOn());
         assertEquals("TODO", ((Card) payloadResult).getCardStatus());
         assertEquals("Card Name", ((Card) payloadResult).getCardName());
         assertEquals(0L, ((Card) payloadResult).getCardId());
@@ -73,31 +78,30 @@ class CardServiceTest {
     public void testViewCardReturnsPayloadWithSuccess() throws Exception {
         Card card = new Card();
         when(cardRepo.findByUserIdOrCardNameOrCreatedOnOrCardStatusOrCardColorOrderByCardNameAscCardColorAscCardStatusDescCreatedOnDesc(
-                anyLong(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),Mockito.any()))
-                .thenReturn(Optional.of(card));
+                anyLong(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(List.of((new Card())));
         CardService cardService = new CardService(cardRepo, userRepo);
         ResponseDTO actualViewCardResult = cardService
-                .viewCard(new CardRequestDTO("Card Name", "Card Color", 1L, 1L, "Card Status", null));
+                .viewCard(new CardRequestDTO("Card Name", "Card Color", 1L, 1L, "Card Status", null), 1);
         assertEquals("Success", actualViewCardResult.message());
         assertEquals(HttpStatus.FOUND, actualViewCardResult.status());
-        assertSame(card, actualViewCardResult.payload());
         verify(cardRepo).findByUserIdOrCardNameOrCreatedOnOrCardStatusOrCardColorOrderByCardNameAscCardColorAscCardStatusDescCreatedOnDesc(
-                anyLong(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+                anyLong(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     @Test
     public void testViewCardFailsToFindACard() throws Exception {
         when(cardRepo.findByUserIdOrCardNameOrCreatedOnOrCardStatusOrCardColorOrderByCardNameAscCardColorAscCardStatusDescCreatedOnDesc(
-                anyLong(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
-                .thenReturn(Optional.empty());
+                anyLong(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(List.of());
         CardService cardService = new CardService(cardRepo, userRepo);
         ResponseDTO actualViewCardResult = cardService
-                .viewCard(new CardRequestDTO("Card Name", "Card Color", 1L, 1L, "Card Status", null));
+                .viewCard(new CardRequestDTO("Card Name", "Card Color", 100L, 1L, "Card Status", null), 1);
         assertEquals("No card exists", actualViewCardResult.message());
         assertEquals(HttpStatus.NOT_FOUND, actualViewCardResult.status());
         assertNull(actualViewCardResult.payload());
         verify(cardRepo).findByUserIdOrCardNameOrCreatedOnOrCardStatusOrCardColorOrderByCardNameAscCardColorAscCardStatusDescCreatedOnDesc(
-                anyLong(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+                anyLong(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
     }
 
 
@@ -128,7 +132,7 @@ class CardServiceTest {
         ResponseDTO actualUpdateCardResult = cardService.updateCard(
                 new CardRequestDTO("Card Name", "Card Color", 1L, 1L, "Card Status", "Jan 1, 2020 8:00am GMT+0100"));
         assertEquals("Card not found", actualUpdateCardResult.message());
-        assertEquals(HttpStatus.CREATED, actualUpdateCardResult.status());
+        assertEquals(HttpStatus.NOT_FOUND, actualUpdateCardResult.status());
         assertNull(actualUpdateCardResult.payload());
         verify(cardRepo).findByCardIdAndUserId(anyLong(), anyLong());
     }
@@ -153,18 +157,22 @@ class CardServiceTest {
         verify(cardRepo).findByCardIdAndUserId(anyLong(), anyLong());
     }
 
-
     @Test
-    public void testViewAllCards() {
-        ArrayList<Card> cardList = new ArrayList<>();
-        Card card = new Card();
-        cardList.add(card);
-        when(cardRepo.findAll()).thenReturn(cardList);
-        ResponseDTO actualViewAllCardsResult = (new CardService(cardRepo, userRepo)).viewAllCards();
+    void testViewAllCards() {
+        ArrayList<Card> content = new ArrayList<>();
+        content.add(new Card());
+        PageImpl<Card> pageImpl = new PageImpl<>(content);
+        CardRepo cardRepo = mock(CardRepo.class);
+        when(cardRepo.findAll(Mockito.<Pageable>any())).thenReturn(pageImpl);
+        ResponseDTO actualViewAllCardsResult = (new CardService(cardRepo, mock(UserRepo.class))).viewAllCards(3);
         assertEquals("Success", actualViewAllCardsResult.message());
         assertEquals(HttpStatus.OK, actualViewAllCardsResult.status());
-        assertSame(card, actualViewAllCardsResult.payload());
-        verify(cardRepo).findAll();
+        Object payloadResult = actualViewAllCardsResult.payload();
+        assertSame(pageImpl, payloadResult);
+        assertEquals(1, ((PageImpl<Object>) payloadResult).toList().size());
+        verify(cardRepo).findAll(Mockito.<Pageable>any());
     }
+
+
 }
 
