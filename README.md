@@ -15,7 +15,7 @@ To get started with this project, you will need to have the following installed 
 JDK 17+ Maven 3+ To build and run the project, follow these steps:
 
 ## Setting up the project
-Clone the repository with the command `git clone https://github.com/SebaMutuku/LogiceaCardManagement.git` for https or ` git clone git@github.com:SebaMutuku/LogiceaCardManagement.git` for ssh
+Clone the repository with the command `git clone https://github.com/SebaMutuku/CardManagement.git` for https or ` git clone git@github.com:SebaMutuku/LogiceaCardManagement.git` for ssh
 Navigate to the project directory and :
 1. Build the project: `mvn clean install -DskipTests` This will build a jar file in target folder
 2. If you are running the application as a standalone jar file, be sure to copy `application.yml` into the same location as the jar file and run using command `java -jar jarname.jar &`. & is included to run it on background.
